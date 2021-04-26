@@ -30,6 +30,7 @@ INCLUDEPATH += $$PWD/src
 HEADERS += \
     $$PWD/src/QJoysticks.h \
     $$PWD/src/QJoysticks/JoysticksCommon.h \
+    $$PWD/src/QJoysticks/JoysticksMapping.h \
     $$PWD/src/QJoysticks/SDL_Joysticks.h \
     $$PWD/src/QJoysticks/VirtualJoystick.h \
     $$PWD/src/QJoysticks/Android_Joystick.h
