@@ -141,6 +141,7 @@ void SDL_Joysticks::update()
 
    while (SDL_PollEvent(&event))
    {
+       qDebug() << "SDL_PollEvent" << event.type;
       switch (event.type)
       {
          case SDL_JOYDEVICEADDED:
@@ -166,16 +167,10 @@ void SDL_Joysticks::update()
             emit countChanged();
             break;
          case SDL_JOYAXISMOTION:
-            if (!SDL_IsGameController(event.cdevice.which))
-            {
-               emit axisEvent(getAxisEvent(&event));
-            }
+            emit axisEvent(getAxisEvent(&event));
             break;
          case SDL_CONTROLLERAXISMOTION:
-            if (SDL_IsGameController(event.cdevice.which))
-            {
-               emit axisEvent(getAxisEvent(&event));
-            }
+            emit axisEvent(getAxisEvent(&event));
             break;
          case SDL_JOYBUTTONUP:
             emit buttonEvent(getButtonEvent(&event));
