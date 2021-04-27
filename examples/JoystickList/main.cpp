@@ -20,13 +20,10 @@
  * THE SOFTWARE.
  */
 
-#include <QPalette>
-#include <QQmlContext>
 #include <QApplication>
-#include <QStyleFactory>
-#include <QQmlApplicationEngine>
-
 #include <QJoysticks.h>
+#include <QObject>
+#include <QDebug>
 
 #ifdef Q_OS_WIN
 #   ifdef main
@@ -34,58 +31,26 @@
 #   endif
 #endif
 
-void configureDarkStyle()
-{
-   qApp->setStyle(QStyleFactory::create("Fusion"));
-   QPalette darkPalette;
-   darkPalette.setColor(QPalette::BrightText, Qt::red);
-   darkPalette.setColor(QPalette::WindowText, Qt::white);
-   darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-   darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-   darkPalette.setColor(QPalette::Text, Qt::white);
-   darkPalette.setColor(QPalette::ButtonText, Qt::white);
-   darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-   darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
-   darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-   darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-   darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
-   darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-   darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-   qApp->setPalette(darkPalette);
-}
-
 int main(int argc, char *argv[])
 {
    QApplication app(argc, argv);
-   QQmlApplicationEngine qmlEngine;
-
-   /*
-    * Make the application use the Fusion style + dark palette
-    */
-   configureDarkStyle();
-
-   /*
-    * QJoysticks is single instance, you can use the "getInstance()" function
-    * directly if you want, or you can create a pointer to it to make code
-    * easier to read;
-    */
    QJoysticks *instance = QJoysticks::getInstance();
+   instance->setVirtualJoystickEnabled(false);
 
-   /* Enable the virtual joystick */
-   instance->setVirtualJoystickRange(1);
-   instance->setVirtualJoystickEnabled(true);
-   instance->setVirtualJoystickAxisSensibility(0.7);
-
-   /*
-    * Register the QJoysticks with the QML engine, so that the QML interface
-    * can easilly use it.
-    */
-   qmlEngine.rootContext()->setContextProperty("QJoysticks", instance);
-
-   /*
-    * Load main.qml and run the application.
-    */
-   qmlEngine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+   QObject::connect(instance, &QJoysticks::countChanged, [=]() {
+       qDebug() << "countChanged " << instance->count();
+       if (instance->count() > 0) {
+           qDebug() << "device connected " << instance->getName(0);
+       } else {
+           qDebug() << "device disconnected " << instance->count();
+       }
+    });
+   QObject::connect(instance, &QJoysticks::axisChanged, [=](const int js, const int axis, const qreal value) {
+       qDebug() << "axisChanged " << js << " axis "<< axis << " value " << value;
+    });
+   QObject::connect(instance, &QJoysticks::buttonChanged, [=](const int js, const int button, const bool pressed) {
+       qDebug() << "buttonChanged " << js << " button "<< button << " pressed " << pressed;
+    });
 
    return app.exec();
 }

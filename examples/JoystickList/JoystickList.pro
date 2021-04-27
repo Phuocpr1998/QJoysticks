@@ -21,12 +21,12 @@
 
 
 TEMPLATE = app
-TARGET = "JoystickList Example"
+TARGET = "Joystick"
 
-QT += qml quick widgets
+QT += quick widgets
 
 SOURCES += $$PWD/main.cpp
-RESOURCES += $$PWD/qml.qrc
-OTHER_FILES += $$PWD/main.qml
 
 include ($$PWD/../../QJoysticks.pri)
+
+HEADERS +=

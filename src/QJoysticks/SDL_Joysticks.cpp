@@ -141,7 +141,7 @@ void SDL_Joysticks::update()
 
    while (SDL_PollEvent(&event))
    {
-       qDebug() << "SDL_PollEvent" << event.type;
+      qDebug() << "SDL_PollEvent" << event.type;
       switch (event.type)
       {
          case SDL_JOYDEVICEADDED:
